@@ -8,11 +8,18 @@
 
 from rest_framework import serializers
 
-from .models import Users
+from .models import Users, Project
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Users
+        depth = 1
+        fields = '__all__'
+
+
+class ProjectSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Project
         depth = 1
         fields = '__all__'

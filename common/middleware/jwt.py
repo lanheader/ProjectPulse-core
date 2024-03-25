@@ -24,10 +24,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
-        re_data = {}
-        re_data['data'] = data
-        re_data['code'] = 20000
-        re_data['message'] = 'success'
+        re_data = {'data': data, 'code': 20000, 'message': 'success'}
 
         return re_data
 

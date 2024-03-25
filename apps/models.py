@@ -23,6 +23,14 @@ class Users(AbstractUser):
         self.failed_login_count = max(0, self.failed_login_count)
         super(Users, self).save(*args, **kwargs)
 
+    @property
+    def is_authenticated(self):
+        """
+        Always return True. This is a way to tell if the user has been
+        authenticated in templates.
+        """
+        return True
+
     def __str__(self):
         if self.display:
             return self.display

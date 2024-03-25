@@ -16,6 +16,8 @@ from common.views import get_user_info
 router = routers.DefaultRouter()
 
 router.register(r'users', views.UserList)
+router.register(r'project', views.ProjectList)
+
 urlpatterns = [
     # 拼接路由路径
     path('api/login/', MyTokenObtainPairView.as_view(), name='token_obtain'),
