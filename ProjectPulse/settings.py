@@ -62,7 +62,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "common.middleware.res.ExceptionChange",
 ]
 
 ROOT_URLCONF = "ProjectPulse.urls"
@@ -174,7 +173,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated'  # 默认权限为验证用户
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 1,
+    'PAGE_SIZE': 30,
 }
 
 # JWT配置 https://zhuanlan.zhihu.com/p/633173061

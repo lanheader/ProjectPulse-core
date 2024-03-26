@@ -6,7 +6,12 @@
 # @File    : urls.py.py
 # @Software: PyCharm
 
-from django.urls import path, include
+from django.urls import path
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 from rest_framework import routers
 
 from apps import views
@@ -14,14 +19,20 @@ from common.middleware.jwt import MyTokenObtainPairView
 from common.views import get_user_info
 
 router = routers.DefaultRouter()
-
-router.register(r'users', views.UserList)
-router.register(r'project', views.ProjectList)
-
 urlpatterns = [
     # 拼接路由路径
-    path('api/login/', MyTokenObtainPairView.as_view(), name='token_obtain'),
-    path('api/', include(router.urls)),
-    path('console/user/info', get_user_info),
+    path('login/', MyTokenObtainPairView.as_view(), name='token_obtain'),
+    path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "swagger/",
+        SpectacularSwaggerView.as_view(url_name="sql_api:schema"),
+        name="swagger",
+    ),
+    path(
+        "redoc/", SpectacularRedocView.as_view(url_name="sql_api:schema"), name="redoc"
+    ),
+    path('user/info', get_user_info),
+    path("project/", views.ProjectList.as_view(), name='project_list'),
+    path("projectUsers/", views.ProjectRolesUsersList.as_view(), name='projectUser_list'),
 
 ]
