@@ -18,18 +18,18 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        depth = 1
+        fields = '__all__'
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         depth = 1
         fields = '__all__'
-
-
-class RoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Role
-        depth = 1
-        fields = ('role_name',)
 
 
 class ProjectRolesUsersSerializer(serializers.ModelSerializer):
@@ -38,6 +38,26 @@ class ProjectRolesUsersSerializer(serializers.ModelSerializer):
     display = serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
     phone = serializers.SerializerMethodField()
+    user_id = serializers.IntegerField(write_only=True)
+    role_id = serializers.IntegerField(write_only=True)
+    project_id = serializers.IntegerField(write_only=True)
+
+    def create(self, validated_data):
+        user_id = validated_data.pop('user_id')
+        role_id = validated_data.pop('role_id')
+        project_id = validated_data.pop('project_id')
+        if (ProjectRolesUsers.objects.
+                filter(users__id=user_id).
+                filter(role__id=role_id).
+                filter(project__id=project_id).
+                first()):
+            raise serializers.ValidationError('该项目用户角色已经存在！')
+
+        user = Users.objects.get(id=user_id)
+        role = Role.objects.get(id=role_id)
+        project = Project.objects.get(id=project_id)
+
+        return ProjectRolesUsers.objects.create(users=user, role=role, project=project, **validated_data)
 
     def get_role(self, ProjectRolesUsers):
         return ProjectRolesUsers.role.role_name
@@ -57,4 +77,4 @@ class ProjectRolesUsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectRolesUsers
         depth = 1
-        fields = ('role', 'username', 'display', 'email', 'phone')
+        fields = ('user_id', 'role_id', 'project_id', 'id', 'role', 'username', 'display', 'email', 'phone')

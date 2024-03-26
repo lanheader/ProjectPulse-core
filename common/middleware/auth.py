@@ -13,7 +13,3 @@ class CustomBackend(ModelBackend):
                 return user
         except Exception as e:
             return None
-
-    def authenticate_header(self, request):
-        print(request)
-        return ''

@@ -33,6 +33,9 @@ urlpatterns = [
     ),
     path('user/info', get_user_info),
     path("project/", views.ProjectList.as_view(), name='project_list'),
+    path("users/", views.UserList.as_view(), name='user_list'),
+    path("role/", views.RoleList.as_view(), name='role_list'),
     path("projectUsers/", views.ProjectRolesUsersList.as_view(), name='projectUser_list'),
+    path('projectrolesusers/<int:pk>/', views.ProjectRolesUsersDelete.as_view(), name='projectrolesusers-delete'),
 
 ]

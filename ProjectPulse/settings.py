@@ -57,7 +57,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -166,7 +166,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
+    # 全局配置异常模块
+    "DEFAULT_RENDERER_CLASSES": ("common.middleware.res.CustomRenderer",),
+    'EXCEPTION_HANDLER': 'common.middleware.res.custom_exception_handler',
     # 鉴权
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -181,6 +183,7 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ),
     "DEFAULT_THROTTLE_RATES": {"anon": "120/min", "user": "600/min"},
+
     # 过滤
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     # 分页
