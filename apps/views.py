@@ -5,16 +5,18 @@ from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from common.middleware.res import CustomResponse
+from common.middleware.pagination import CustomizedPagination
 from .filter import ProjectFilter, ProjectRolesUsersFilter
 from .models import Users, Project, ProjectRolesUsers
 from .serializers import UserSerializer, ProjectSerializer, ProjectRolesUsersSerializer
 
 
 class UserList(viewsets.ModelViewSet):
+    filterset_class = ProjectFilter
     permission_classes = [IsAuthenticated]
-    queryset = Users.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+    queryset = Users.objects.all().order_by('-create_time')
+    pagination_class = CustomizedPagination
 
 
 class ProjectList(generics.ListAPIView):
@@ -22,6 +24,7 @@ class ProjectList(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ProjectSerializer
     queryset = Project.objects.all().order_by('-create_time')
+    pagination_class = CustomizedPagination
 
     @extend_schema(
         summary="项目清单",
@@ -30,11 +33,17 @@ class ProjectList(generics.ListAPIView):
         description="列出所有项目（过滤，分页）",
     )
     def get(self, request):
-        instances = self.filter_queryset(self.queryset)
-        page_ins = self.paginate_queryset(queryset=instances)
+        projects = self.filter_queryset(self.queryset)
+        page_ins = self.paginate_queryset(queryset=projects)
         serializer_obj = self.get_serializer(page_ins, many=True)
-        data = serializer_obj.data
-        return CustomResponse(data=data, data_code=20000, msg="获取成功", status=200, data_status="success")
+        data = {
+            "data": serializer_obj.data,
+            "code": 20000,
+            "msg": "获取成功",
+            "status": 200,
+            "data_status": "success"
+        }
+        return self.get_paginated_response(data=data)
 
 
 class ProjectRolesUsersList(generics.ListAPIView):
@@ -42,6 +51,7 @@ class ProjectRolesUsersList(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ProjectRolesUsersSerializer
     queryset = ProjectRolesUsers.objects.all().order_by('-create_time')
+    pagination_class = CustomizedPagination
 
     @extend_schema(
         summary="项目角色清单",
@@ -50,8 +60,14 @@ class ProjectRolesUsersList(generics.ListAPIView):
         description="列出项目下所有用户（过滤，分页）",
     )
     def get(self, request):
-        instances = self.filter_queryset(self.queryset)
-        page_ins = self.paginate_queryset(queryset=instances)
+        projectUsers = self.filter_queryset(self.queryset)
+        page_ins = self.paginate_queryset(queryset=projectUsers)
         serializer_obj = self.get_serializer(page_ins, many=True)
-        data = serializer_obj.data
-        return CustomResponse(data=data, data_code=20000, msg="获取成功", status=200, data_status="success")
+        data = {
+            "data": serializer_obj.data,
+            "code": 20000,
+            "msg": "获取成功",
+            "status": 200,
+            "data_status": "success"
+        }
+        return self.get_paginated_response(data=data)

@@ -28,5 +28,9 @@ class ProjectRolesUsersFilter(filters.FilterSet):
     class Meta:
         model = ProjectRolesUsers
         fields = {
-
+            "id": ["exact"],
+            "project": ["exact"],
+            "role": ["exact"],
+            "users": ["exact"],
+            "create_time": ["exact"],
         }

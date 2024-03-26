@@ -1,29 +1,41 @@
-# -*- coding: utf-8 -*-
-# @Author  : LanJX
-# @Email   : lanheader@163.com
-# @Home    : https://www.cnblogs.com/lanheader/
-# @Time    : 2024/3/24 00:31
-# @File    : res.py
-# @Software: PyCharm
-from rest_framework.response import Response
+from collections import OrderedDict
+
+from django.conf import settings
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.views import Response
 
 
-class CustomResponse(Response):
-    def __init__(self, data_status, data_code, msg='', data=None, status=None,
-                 template_name=None, headers=None,
-                 exception=False, content_type=None):
-        data = {
-            'status': data_status,
-            'code': data_code,
-            'msg': msg,
-            'data': data,
-        }
-        super().__init__(data=data, status=status,
-                         template_name=template_name, headers=headers,
-                         exception=exception, content_type=content_type)
+class CustomizedPagination(PageNumberPagination):
+    """
+    自定义分页器
+    """
+
+    page_size = (
+        settings.REST_FRAMEWORK["PAGE_SIZE"]
+        if "PAGE_SIZE" in settings.REST_FRAMEWORK.keys()
+        else 20
+    )
+    page_query_param = "page"
+    page_size_query_param = "size"
+    max_page_size = None
+
+    def get_paginated_response(self, data):
+        return Response(
+            OrderedDict(
+                [
+                    ("count", data.get("count", self.page.paginator.count)),
+                    ("code", data.get("code", 20000)),
+                    ("message", data.get("message", "success")),
+                    ("status", data.get("status", 200)),
+                    ("data_status", data.get("data_status", "success")),
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("data", data.get("data")),
+                ]
+            )
+        )
 
 
-# 登录过期时 自定义 返回
 class ExceptionChange:
 
     def __init__(self, get_response):
