@@ -17,13 +17,15 @@ class AppsApplication(models.Model):
     create_time = models.DateTimeField()
     update_time = models.DateTimeField()
     application_port = models.IntegerField(blank=True, null=True)
-    creator = models.ForeignKey('AppsUsers', models.DO_NOTHING, blank=True, null=True)
-    project = models.ForeignKey('AppsProject', models.DO_NOTHING, blank=True, null=True)
-    resource = models.ForeignKey('AppsResource', models.DO_NOTHING, blank=True, null=True)
+    creator = models.ForeignKey("AppsUsers", models.DO_NOTHING, blank=True, null=True)
+    project = models.ForeignKey("AppsProject", models.DO_NOTHING, blank=True, null=True)
+    resource = models.ForeignKey(
+        "AppsResource", models.DO_NOTHING, blank=True, null=True
+    )
 
     class Meta:
         managed = False
-        db_table = 'apps_application'
+        db_table = "apps_application"
 
 
 class AppsProject(models.Model):
@@ -34,22 +36,22 @@ class AppsProject(models.Model):
     description = models.TextField()
     create_time = models.DateTimeField()
     update_time = models.DateTimeField()
-    creator = models.ForeignKey('AppsUsers', models.DO_NOTHING, blank=True, null=True)
+    creator = models.ForeignKey("AppsUsers", models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'apps_project'
+        db_table = "apps_project"
 
 
 class AppsProjectMembers(models.Model):
     id = models.BigAutoField(primary_key=True)
     project = models.ForeignKey(AppsProject, models.DO_NOTHING)
-    users = models.ForeignKey('AppsUsers', models.DO_NOTHING)
+    users = models.ForeignKey("AppsUsers", models.DO_NOTHING)
 
     class Meta:
         managed = False
-        db_table = 'apps_project_members'
-        unique_together = (('project', 'users'),)
+        db_table = "apps_project_members"
+        unique_together = (("project", "users"),)
 
 
 class AppsResource(models.Model):
@@ -64,12 +66,12 @@ class AppsResource(models.Model):
     description = models.TextField()
     create_time = models.DateTimeField()
     update_time = models.DateTimeField()
-    creator = models.ForeignKey('AppsUsers', models.DO_NOTHING, blank=True, null=True)
+    creator = models.ForeignKey("AppsUsers", models.DO_NOTHING, blank=True, null=True)
     project = models.ForeignKey(AppsProject, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'apps_resource'
+        db_table = "apps_resource"
 
 
 class AppsRoles(models.Model):
@@ -79,22 +81,22 @@ class AppsRoles(models.Model):
     description = models.TextField()
     create_time = models.DateTimeField()
     update_time = models.DateTimeField()
-    creator = models.ForeignKey('AppsUsers', models.DO_NOTHING, blank=True, null=True)
+    creator = models.ForeignKey("AppsUsers", models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'apps_roles'
+        db_table = "apps_roles"
 
 
 class AppsRolesMembers(models.Model):
     id = models.BigAutoField(primary_key=True)
     role = models.ForeignKey(AppsRoles, models.DO_NOTHING)
-    users = models.ForeignKey('AppsUsers', models.DO_NOTHING)
+    users = models.ForeignKey("AppsUsers", models.DO_NOTHING)
 
     class Meta:
         managed = False
-        db_table = 'apps_roles_members'
-        unique_together = (('role', 'users'),)
+        db_table = "apps_roles_members"
+        unique_together = (("role", "users"),)
 
 
 class AppsUsers(models.Model):
@@ -118,29 +120,29 @@ class AppsUsers(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'apps_users'
+        db_table = "apps_users"
 
 
 class AppsUsersGroups(models.Model):
     id = models.BigAutoField(primary_key=True)
     users = models.ForeignKey(AppsUsers, models.DO_NOTHING)
-    group = models.ForeignKey('AuthGroup', models.DO_NOTHING)
+    group = models.ForeignKey("AuthGroup", models.DO_NOTHING)
 
     class Meta:
         managed = False
-        db_table = 'apps_users_groups'
-        unique_together = (('users', 'group'),)
+        db_table = "apps_users_groups"
+        unique_together = (("users", "group"),)
 
 
 class AppsUsersUserPermissions(models.Model):
     id = models.BigAutoField(primary_key=True)
     users = models.ForeignKey(AppsUsers, models.DO_NOTHING)
-    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
+    permission = models.ForeignKey("AuthPermission", models.DO_NOTHING)
 
     class Meta:
         managed = False
-        db_table = 'apps_users_user_permissions'
-        unique_together = (('users', 'permission'),)
+        db_table = "apps_users_user_permissions"
+        unique_together = (("users", "permission"),)
 
 
 class AuthGroup(models.Model):
@@ -148,29 +150,29 @@ class AuthGroup(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'auth_group'
+        db_table = "auth_group"
 
 
 class AuthGroupPermissions(models.Model):
     id = models.BigAutoField(primary_key=True)
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
+    permission = models.ForeignKey("AuthPermission", models.DO_NOTHING)
 
     class Meta:
         managed = False
-        db_table = 'auth_group_permissions'
-        unique_together = (('group', 'permission'),)
+        db_table = "auth_group_permissions"
+        unique_together = (("group", "permission"),)
 
 
 class AuthPermission(models.Model):
     name = models.CharField(max_length=255)
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
+    content_type = models.ForeignKey("DjangoContentType", models.DO_NOTHING)
     codename = models.CharField(max_length=100)
 
     class Meta:
         managed = False
-        db_table = 'auth_permission'
-        unique_together = (('content_type', 'codename'),)
+        db_table = "auth_permission"
+        unique_together = (("content_type", "codename"),)
 
 
 class DjangoAdminLog(models.Model):

@@ -13,7 +13,10 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, ["*"]),
-    SECRET_KEY=(str, "django-insecure-@1lnlj-tbqnvp5e)&f!q7oqvwyi(%5meql4+0&ddd#(zh493#2"),
+    SECRET_KEY=(
+        str,
+        "django-insecure-@1lnlj-tbqnvp5e)&f!q7oqvwyi(%5meql4+0&ddd#(zh493#2",
+    ),
     DATABASE_URL=(str, "mysql://root:@127.0.0.1:3306/archery"),
     CACHE_URL=(str, "redis://127.0.0.1:6379/0"),
     # CSRF_TRUSTED_ORIGINS=subdomain.example.com,subdomain.example2.com subdomain.example.com
@@ -46,7 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    'rest_framework_simplejwt',
+    "rest_framework_simplejwt",
     "django_filters",
     "drf_spectacular",
     "apps.apps.AppsConfig",
@@ -142,12 +145,9 @@ TIME_ZONE = "Asia/Shanghai"
 
 USE_I18N = True
 
-USE_TZ = True
-# 时间格式化
-USE_L10N = False
-DATETIME_FORMAT = "Y-m-d H:i:s"
-DATE_FORMAT = "Y-m-d"
+USE_L10N = True
 
+USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 
 
@@ -168,14 +168,14 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     # 全局配置异常模块
     "DEFAULT_RENDERER_CLASSES": ("common.middleware.res.CustomRenderer",),
-    'EXCEPTION_HANDLER': 'common.middleware.res.custom_exception_handler',
+    "EXCEPTION_HANDLER": "common.middleware.res.custom_exception_handler",
     # 鉴权
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated'  # 默认权限为验证用户
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated"  # 默认权限为验证用户
     ],
     # 限速（anon：未认证用户  user：认证用户）
     "DEFAULT_THROTTLE_CLASSES": (
@@ -183,7 +183,6 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ),
     "DEFAULT_THROTTLE_RATES": {"anon": "120/min", "user": "600/min"},
-
     # 过滤
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     # 分页

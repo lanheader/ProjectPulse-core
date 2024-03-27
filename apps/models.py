@@ -10,6 +10,7 @@ class Users(AbstractUser):
     """
     用户信息扩展
     """
+
     phone = models.CharField("手机号", max_length=11, blank=True)
     display = models.CharField("显示的中文名", max_length=50, default="")
     ding_user_id = models.CharField("钉钉UserID", max_length=64, blank=True)
@@ -53,7 +54,9 @@ class Role(models.Model):
     description = models.TextField("角色描述", blank=True)
     create_time = models.DateTimeField("创建时间", auto_now_add=True)
     update_time = models.DateTimeField("更新时间", auto_now=True)
-    creator = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name="role_creator")
+    creator = models.ForeignKey(
+        Users, on_delete=models.SET_NULL, null=True, related_name="role_creator"
+    )
 
     def __str__(self):
         return self.role_name
@@ -73,10 +76,14 @@ class Project(models.Model):
     project_name = models.CharField("项目名称", max_length=50, unique=True)
     project_type = models.CharField("项目类型", max_length=50, default="default")
     project_code = models.CharField("项目代码", max_length=50, unique=True)
+    is_active = models.BooleanField("是否激活", default=True)
+    is_alarm = models.BooleanField("是否告警", default=True)
     description = models.TextField("项目描述", blank=True)
     create_time = models.DateTimeField("创建时间", auto_now_add=True)
     update_time = models.DateTimeField("更新时间", auto_now=True)
-    creator = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name="creator")
+    creator = models.ForeignKey(
+        Users, on_delete=models.SET_NULL, null=True, related_name="creator"
+    )
 
     def __str__(self):
         return self.project_name
@@ -100,11 +107,17 @@ class Resource(models.Model):
     resource_memory = models.IntegerField("资源内存", blank=True, null=True)
     resource_disk = models.IntegerField("资源磁盘", blank=True, null=True)
     resource_os = models.CharField("资源操作系统", max_length=50, blank=True)
+    is_active = models.BooleanField("是否激活", default=True)
+    is_alarm = models.BooleanField("是否告警", default=True)
     description = models.TextField("资源描述", blank=True)
     create_time = models.DateTimeField("创建时间", auto_now_add=True)
     update_time = models.DateTimeField("更新时间", auto_now=True)
-    creator = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name="resource_creator")
-    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, related_name="resource_project")
+    creator = models.ForeignKey(
+        Users, on_delete=models.SET_NULL, null=True, related_name="resource_creator"
+    )
+    project = models.ForeignKey(
+        Project, on_delete=models.SET_NULL, null=True, related_name="resource_project"
+    )
 
     def __str__(self):
         return self.resource_name
@@ -129,11 +142,25 @@ class Application(models.Model):
     description = models.TextField("应用描述", blank=True)
     create_time = models.DateTimeField("创建时间", auto_now_add=True)
     update_time = models.DateTimeField("更新时间", auto_now=True)
-    creator = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name="application_creator")
-    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, related_name="application_project")
+    creator = models.ForeignKey(
+        Users, on_delete=models.SET_NULL, null=True, related_name="application_creator"
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="application_project",
+    )
     application_port = models.IntegerField("应用端口", blank=True, null=True)
+    is_active = models.BooleanField("是否激活", default=True)
+    is_alarm = models.BooleanField("是否告警", default=True)
     webhook = models.CharField("Webhook", max_length=255, blank=True)
-    resource = models.ForeignKey(Resource, on_delete=models.SET_NULL, null=True, related_name="application_resource")
+    resource = models.ForeignKey(
+        Resource,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="application_resource",
+    )
 
     def __str__(self):
         return self.application_name
@@ -149,16 +176,17 @@ class ProjectRolesUsers(models.Model):
     """
     项目角色信息
     """
+
     role = models.ForeignKey(Role, models.DO_NOTHING, verbose_name="角色")
-    users = models.ForeignKey('Users', models.DO_NOTHING, verbose_name="用户")
+    users = models.ForeignKey("Users", models.DO_NOTHING, verbose_name="用户")
     project = models.ForeignKey(Project, models.DO_NOTHING, verbose_name="项目")
     create_time = models.DateTimeField("创建时间", auto_now_add=True)
     update_time = models.DateTimeField("更新时间", auto_now=True)
 
     class Meta:
-        db_table = 'apps_project_roles'
+        db_table = "apps_project_roles"
         managed = True
-        unique_together = (('role', 'users', 'project'),)
+        unique_together = (("role", "users", "project"),)
         verbose_name = "项目角色管理"
         verbose_name_plural = "项目角色管理"
 
@@ -168,19 +196,38 @@ class Account(models.Model):
     """
     账号信息
     """
+
     account_name = models.CharField("账号名称", max_length=200)
     account_password = fields.EncryptedCharField(verbose_name="账号密码", max_length=300)
-    account_type = models.IntegerField("账号类型", choices=ResourceType.choices, null=True, blank=True)
+    account_type = models.IntegerField(
+        "账号类型", choices=ResourceType.choices, null=True, blank=True
+    )
     description = models.TextField("账号描述", blank=True)
     create_time = models.DateTimeField("创建时间", auto_now_add=True)
     update_time = models.DateTimeField("更新时间", auto_now=True)
-    creator = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True, related_name="account_creator",
-                                verbose_name="创建人")
-    resource = models.ForeignKey(Resource, on_delete=models.SET_NULL, null=True, blank=True,
-                                 related_name="account_resource",
-                                 verbose_name="资源")
-    application = models.ForeignKey(Application, on_delete=models.SET_NULL, null=True, blank=True,
-                                    related_name="account_application", verbose_name="应用")
+    creator = models.ForeignKey(
+        Users,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="account_creator",
+        verbose_name="创建人",
+    )
+    resource = models.ForeignKey(
+        Resource,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="account_resource",
+        verbose_name="资源",
+    )
+    application = models.ForeignKey(
+        Application,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="account_application",
+        verbose_name="应用",
+    )
 
     def __str__(self):
         return self.account_name

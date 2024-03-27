@@ -8,14 +8,19 @@ from rest_framework.response import Response
 from common.middleware.pagination import CustomizedPagination
 from .filter import ProjectFilter, ProjectRolesUsersFilter, UsersFilter, RoleFilter
 from .models import Users, Project, Role, ProjectRolesUsers
-from .serializers import UserSerializer, ProjectSerializer, ProjectRolesUsersSerializer, RoleSerializer
+from .serializers import (
+    UserSerializer,
+    ProjectSerializer,
+    ProjectRolesUsersSerializer,
+    RoleSerializer,
+)
 
 
 class UserList(generics.ListAPIView):
     filterset_class = UsersFilter
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
-    queryset = Users.objects.all().order_by('-date_joined')
+    queryset = Users.objects.all().order_by("-date_joined")
     pagination_class = CustomizedPagination
 
     @extend_schema(
@@ -33,16 +38,29 @@ class UserList(generics.ListAPIView):
             "code": 20000,
             "msg": "获取成功",
             "status": 200,
-            "data_status": "success"
+            "data_status": "success",
         }
         return self.get_paginated_response(data=data)
+
+    @extend_schema(
+        summary="创建用户",
+        request=UserSerializer,
+        responses={201: UserSerializer},
+        description="创建一个用户",
+    )
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RoleList(generics.ListAPIView):
     filterset_class = RoleFilter
     permission_classes = [IsAuthenticated]
     serializer_class = RoleSerializer
-    queryset = Role.objects.all().order_by('-create_time')
+    queryset = Role.objects.all().order_by("-create_time")
     pagination_class = CustomizedPagination
 
     @extend_schema(
@@ -67,7 +85,7 @@ class ProjectList(generics.ListAPIView):
     filterset_class = ProjectFilter
     permission_classes = [IsAuthenticated]
     serializer_class = ProjectSerializer
-    queryset = Project.objects.all().order_by('-create_time')
+    queryset = Project.objects.all().order_by("-create_time")
     pagination_class = CustomizedPagination
 
     @extend_schema(
@@ -92,7 +110,7 @@ class ProjectRolesUsersList(generics.ListAPIView):
     filterset_class = ProjectRolesUsersFilter
     permission_classes = [IsAuthenticated]
     serializer_class = ProjectRolesUsersSerializer
-    queryset = ProjectRolesUsers.objects.all().order_by('-create_time')
+    queryset = ProjectRolesUsers.objects.all().order_by("-create_time")
     pagination_class = CustomizedPagination
 
     @extend_schema(

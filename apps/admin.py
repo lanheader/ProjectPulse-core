@@ -3,7 +3,15 @@ from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib.auth.models import Group
 
 from apps.form import GroupForm
-from .models import Users, Role, Project, ProjectRolesUsers, Resource, Application, Account
+from .models import (
+    Users,
+    Role,
+    Project,
+    ProjectRolesUsers,
+    Resource,
+    Application,
+    Account,
+)
 
 # Register your models here.
 admin.site.unregister(Group)
@@ -87,8 +95,16 @@ class UsersAdmin(UserAdmin):
             },
         ),
     )
-    filter_horizontal = ("groups", "user_permissions",)
-    list_filter = ("is_staff", "is_superuser", "is_active", "groups",)
+    filter_horizontal = (
+        "groups",
+        "user_permissions",
+    )
+    list_filter = (
+        "is_staff",
+        "is_superuser",
+        "is_active",
+        "groups",
+    )
 
 
 # 用户组管理
@@ -118,8 +134,24 @@ class GroupAdminNew(GroupAdmin):
 # 角色管理
 @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):
-    list_display = ("id", "role_name", "role_code", "description", "create_time", "update_time", "creator")
-    search_fields = ("id", "role_name", "role_code", "description", "create_time", "update_time", "creator")
+    list_display = (
+        "id",
+        "role_name",
+        "role_code",
+        "description",
+        "create_time",
+        "update_time",
+        "creator",
+    )
+    search_fields = (
+        "id",
+        "role_name",
+        "role_code",
+        "description",
+        "create_time",
+        "update_time",
+        "creator",
+    )
     list_display_links = ("id", "role_name")
     ordering = ("id",)
     # 编辑页显示内容
@@ -128,9 +160,7 @@ class RoleAdmin(admin.ModelAdmin):
         ("创建信息", {"fields": ("creator",)}),
     )
     # 添加页显示内容
-    add_fieldsets = (
-        ("角色信息", {"fields": ("role_name", "role_code", "description")}),
-    )
+    add_fieldsets = (("角色信息", {"fields": ("role_name", "role_code", "description")}),)
     list_filter = ("create_time", "update_time", "creator")
 
 
@@ -138,19 +168,39 @@ class RoleAdmin(admin.ModelAdmin):
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_display = (
-        "project_name", "project_type", "project_code", "description", "create_time", "update_time", "creator")
+        "project_name",
+        "project_type",
+        "project_code",
+        "description",
+        "create_time",
+        "update_time",
+        "creator",
+    )
     search_fields = (
-        "project_name", "project_type", "project_code", "description", "create_time", "update_time", "creator")
+        "project_name",
+        "project_type",
+        "project_code",
+        "description",
+        "create_time",
+        "update_time",
+        "creator",
+    )
     list_display_links = ("project_name",)
     ordering = ("id",)
     # 编辑页显示内容
     fieldsets = (
-        ("项目信息", {"fields": ("project_name", "project_type", "project_code", "description")}),
+        (
+            "项目信息",
+            {"fields": ("project_name", "project_type", "project_code", "description")},
+        ),
         ("创建信息", {"fields": ("creator",)}),
     )
     # 添加页显示内容
     add_fieldsets = (
-        ("项目信息", {"fields": ("project_name", "project_type", "project_code", "description")}),
+        (
+            "项目信息",
+            {"fields": ("project_name", "project_type", "project_code", "description")},
+        ),
     )
     list_filter = ("create_time", "update_time", "creator")
 
@@ -158,37 +208,63 @@ class ProjectAdmin(admin.ModelAdmin):
 # 资源管理
 @admin.register(Resource)
 class ResourceAdmin(admin.ModelAdmin):
-    list_display = ("id", "resource_name", "resource_type", "description", "create_time", "update_time", "creator")
-    search_fields = ("id", "resource_name", "resource_type", "description", "create_time", "update_time", "creator")
+    list_display = (
+        "id",
+        "resource_name",
+        "resource_type",
+        "description",
+        "create_time",
+        "update_time",
+        "creator",
+    )
+    search_fields = (
+        "id",
+        "resource_name",
+        "resource_type",
+        "description",
+        "create_time",
+        "update_time",
+        "creator",
+    )
     list_display_links = ("id", "resource_name")
     ordering = ("id",)
     # 编辑页显示内容
     fieldsets = (
-        ("应用信息", {"fields": (
-            "resource_name",
-            "resource_type",
-            "resource_ip",
-            "resource_cpu",
-            "resource_memory",
-            "resource_disk",
-            "resource_os",
-            "description",
-            "project"
-        )}),
+        (
+            "应用信息",
+            {
+                "fields": (
+                    "resource_name",
+                    "resource_type",
+                    "resource_ip",
+                    "resource_cpu",
+                    "resource_memory",
+                    "resource_disk",
+                    "resource_os",
+                    "description",
+                    "project",
+                )
+            },
+        ),
         ("创建信息", {"fields": ("creator",)}),
     )
     # 添加页显示内容
     add_fieldsets = (
-        ("应用信息", {"fields": (
-            "resource_name",
-            "resource_type",
-            "resource_ip",
-            "resource_cpu",
-            "resource_memory",
-            "resource_disk",
-            "resource_os",
-            "description"
-        )}),
+        (
+            "应用信息",
+            {
+                "fields": (
+                    "resource_name",
+                    "resource_type",
+                    "resource_ip",
+                    "resource_cpu",
+                    "resource_memory",
+                    "resource_disk",
+                    "resource_os",
+                    "description",
+                )
+            },
+        ),
     )
     list_filter = ("create_time", "update_time", "creator")
 
@@ -197,40 +273,64 @@ class ResourceAdmin(admin.ModelAdmin):
 @admin.register(Application)
 class Application(admin.ModelAdmin):
     list_display = (
-        "id", "application_name", "deploy_type", "application_type", "application_code", "description", "create_time",
+        "id",
+        "application_name",
+        "deploy_type",
+        "application_type",
+        "application_code",
+        "description",
+        "create_time",
         "update_time",
-        "creator")
+        "creator",
+    )
     search_fields = (
-        "id", "application_name", "deploy_type", "application_type", "application_code", "description", "create_time",
+        "id",
+        "application_name",
+        "deploy_type",
+        "application_type",
+        "application_code",
+        "description",
+        "create_time",
         "update_time",
-        "creator")
+        "creator",
+    )
     list_display_links = ("id", "application_name")
     ordering = ("id",)
     # 编辑页显示内容
     fieldsets = (
-        ("应用信息", {"fields": (
-            "application_name",
-            "deploy_type",
-            "application_type",
-            "application_code",
-            "application_port",
-            "resource",
-            "description",
-            "project"
-        )}),
+        (
+            "应用信息",
+            {
+                "fields": (
+                    "application_name",
+                    "deploy_type",
+                    "application_type",
+                    "application_code",
+                    "application_port",
+                    "resource",
+                    "description",
+                    "project",
+                )
+            },
+        ),
         ("创建信息", {"fields": ("creator",)}),
     )
     # 添加页显示内容
     add_fieldsets = (
-        ("应用信息", {"fields": (
-            "application_name",
-            "application_type",
-            "application_code",
-            "application_port",
-            "resource",
-            "description",
-            "project"
-        )}),
+        (
+            "应用信息",
+            {
+                "fields": (
+                    "application_name",
+                    "application_type",
+                    "application_code",
+                    "application_port",
+                    "resource",
+                    "description",
+                    "project",
+                )
+            },
+        ),
     )
     list_filter = ("create_time", "update_time", "creator")
 
@@ -238,21 +338,58 @@ class Application(admin.ModelAdmin):
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
     list_display = (
-        "id", "account_name", "account_type", "description", "create_time", "update_time", "creator")
+        "id",
+        "account_name",
+        "account_type",
+        "description",
+        "create_time",
+        "update_time",
+        "creator",
+    )
     search_fields = (
-        "id", "account_name", "account_type", "description", "create_time", "update_time", "creator")
+        "id",
+        "account_name",
+        "account_type",
+        "description",
+        "create_time",
+        "update_time",
+        "creator",
+    )
     list_display_links = ("id", "account_name")
     ordering = ("id",)
     # 编辑页显示内容
     fieldsets = (
-        ("账号信息", {"fields": (
-            "account_name", "account_password", "resource", "application", "account_type", "description")}),
+        (
+            "账号信息",
+            {
+                "fields": (
+                    "account_name",
+                    "account_password",
+                    "resource",
+                    "application",
+                    "account_type",
+                    "description",
+                )
+            },
+        ),
         ("创建信息", {"fields": ("creator",)}),
     )
     # 添加页显示内容
     add_fieldsets = (
-        ("账号信息", {"fields": (
-            "account_name", "account_password", "resource", "application", "account_code", "description", "project")}),
+        (
+            "账号信息",
+            {
+                "fields": (
+                    "account_name",
+                    "account_password",
+                    "resource",
+                    "application",
+                    "account_code",
+                    "description",
+                    "project",
+                )
+            },
+        ),
     )
     list_filter = ("create_time", "update_time", "creator")
 
@@ -260,18 +397,12 @@ class AccountAdmin(admin.ModelAdmin):
 # 项目角色管理
 @admin.register(ProjectRolesUsers)
 class ProjectRolesUsersAdmin(admin.ModelAdmin):
-    list_display = (
-        "project", "role", "users", "create_time", "update_time")
-    search_fields = (
-        "project", "role", "users", "create_time", "update_time")
+    list_display = ("project", "role", "users", "create_time", "update_time")
+    search_fields = ("project", "role", "users", "create_time", "update_time")
     list_display_links = ("project",)
     ordering = ("id",)
     # 编辑页显示内容
-    fieldsets = (
-        ("项目角色信息", {"fields": ("project", "role", "users")}),
-    )
+    fieldsets = (("项目角色信息", {"fields": ("project", "role", "users")}),)
     # 添加页显示内容
-    add_fieldsets = (
-        ("项目角色信息", {"fields": ("project", "role", "users")}),
-    )
+    add_fieldsets = (("项目角色信息", {"fields": ("project", "role", "users")}),)
     list_filter = ("create_time", "update_time")
