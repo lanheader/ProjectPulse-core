@@ -36,10 +36,10 @@ class CustomRenderer(JSONRenderer):
         if renderer_context:
             if isinstance(data, dict):
                 msg = data.pop("message", "请求成功")
-                code = data.pop("code", renderer_context["response"].status_code)
+                code = data.pop("code", 20000)
             else:
                 msg = "请求成功"
-                code = renderer_context["response"].status_code
+                code = 20000
             ret = {
                 "message": msg,
                 "code": code,

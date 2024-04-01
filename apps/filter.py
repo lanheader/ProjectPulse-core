@@ -7,7 +7,7 @@
 # @Software: PyCharm
 from django_filters import rest_framework as filters
 
-from apps.models import Project, ProjectRolesUsers, Users, Role
+from apps.models import Project, ProjectRolesUsers, Users, Role, Resource
 
 
 class ProjectFilter(filters.FilterSet):
@@ -40,10 +40,10 @@ class UsersFilter(filters.FilterSet):
     class Meta:
         model = Users
         fields = {
-            "username": ["icontains"],
-            "display": ["icontains"],
-            "email": ["icontains"],
-            "phone": ["icontains"],
+            "username": ["exact"],
+            "display": ["exact"],
+            "email": ["exact"],
+            "phone": ["exact"],
             "date_joined": ["exact"],
             "is_active": ["exact"],
         }
@@ -58,4 +58,16 @@ class RoleFilter(filters.FilterSet):
             "description": ["icontains"],
             "create_time": ["exact"],
             "creator": ["exact"],
+        }
+
+
+class ResourceFilter(filters.FilterSet):
+    class Meta:
+        model = Resource
+        fields = {
+            "id": ["exact"],
+            "resource_name": ["exact"],
+            "resource_ip": ["exact"],
+            "resource_os": ["exact"],
+            "create_time": ["exact"]
         }

@@ -5,46 +5,16 @@
 # @Time    : 2024/3/23 20:31
 # @File    : serializers.py.py
 # @Software: PyCharm
-import pytz
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.db import models
 from django.db import transaction
 from rest_framework import serializers
 
-from .models import Users, Project, ProjectRolesUsers, Role
+from .models import Users, Project, ProjectRolesUsers, Role, Resource
 
 
-class UnixEpochDateTimeField(serializers.Field):
-    def to_representation(self, value):
-        """
-        Convert datetime object to millisecond timestamp.
-        """
-        import datetime
+class UserSerializer(serializers.ModelSerializer):
 
-        epoch = datetime.datetime(1970, 1, 1, tzinfo=pytz.utc)
-        value = value.astimezone(pytz.utc)  # 将时间转换为UTC时间
-        delta = value - epoch
-        return int(delta.total_seconds() * 1000)
-
-
-class CustomModelSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # 获取模型字段信息
-        model_fields = self.Meta.model._meta.fields
-        for field in model_fields:
-            # 如果字段类型是DateTimeField，则将其序列化为时间戳
-            if isinstance(field, models.DateTimeField):
-                self.fields[field.name] = UnixEpochDateTimeField()
-
-    class Meta:
-        # 在子类中设置模型类
-        model = None
-        fields = "__all__"
-
-
-class UserSerializer(CustomModelSerializer):
     def create(self, validated_data):
         with transaction.atomic():
             extra_data = dict()
@@ -68,24 +38,55 @@ class UserSerializer(CustomModelSerializer):
     class Meta:
         model = Users
         fields = "__all__"
-        extra_kwargs = {"password": {"write_only": True}, "display": {"required": True}}
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "display": {"required": True},
+        }
 
 
-class RoleSerializer(CustomModelSerializer):
+class UserDetailSerializer(serializers.ModelSerializer):
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            if attr == "password":
+                instance.set_password(value)
+            elif attr in ("groups", "user_permissions", "resource_group"):
+                getattr(instance, attr).set(value)
+            else:
+                setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+    def validate_password(self, password):
+        try:
+            validate_password(password)
+        except ValidationError as msg:
+            raise serializers.ValidationError(msg)
+        return password
+
+    class Meta:
+        model = Users
+        fields = "__all__"
+        extra_kwargs = {
+            "password": {"write_only": True, "required": False},
+            "username": {"required": False},
+        }
+
+
+class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         depth = 1
         fields = "__all__"
 
 
-class ProjectSerializer(CustomModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         depth = 1
         fields = "__all__"
 
 
-class ProjectRolesUsersSerializer(CustomModelSerializer):
+class ProjectRolesUsersSerializer(serializers.ModelSerializer):
     role = serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
     display = serializers.SerializerMethodField()
@@ -146,3 +147,20 @@ class ProjectRolesUsersSerializer(CustomModelSerializer):
             "update_time",
             "phone",
         )
+
+
+class ResourceSerializer(serializers.ModelSerializer):
+    project_id = serializers.IntegerField(write_only=True)
+
+    def create(self, validated_data):
+        project_id = validated_data.pop('project_id')
+        project = Project.objects.get(id=project_id)
+        # Assuming that you have access to request in the serializer context
+        # and the user is attached to the request by Django authentication middleware
+        user = self.context['request'].user
+        return Resource.objects.create(creator=user, project=project, **validated_data)
+
+    class Meta:
+        model = Resource
+        depth = 1
+        fields = "__all__"

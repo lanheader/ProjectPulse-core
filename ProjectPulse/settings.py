@@ -192,7 +192,7 @@ REST_FRAMEWORK = {
 
 # Swagger UI
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Archery API",
+    "TITLE": "project API",
     "DESCRIPTION": "OpenAPI 3.0",
     "VERSION": "1.0.0",
 }

@@ -13,7 +13,8 @@ class ResourceType(models.IntegerChoices):
     ECS = 1, "服务器"
     RDS = 2, "数据库"
     VPN = 3, "VPN"
-    MIDDLEWARE = 4, "中间件"
+    OSS = 4, "对象存储"
+    MIDDLEWARE = 5, "中间件"
 
 
 class DeployType(models.IntegerChoices):
