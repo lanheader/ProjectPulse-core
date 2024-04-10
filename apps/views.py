@@ -102,7 +102,9 @@ class UserDetail(views.APIView):
         user = self.get_object(pk)
         user.is_active = not user.is_active
         user.save()
-        return Response(status=status.HTTP_200_OK)
+        serializer = UserDetailSerializer(user)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class RoleList(generics.ListAPIView):

@@ -167,8 +167,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     # 全局配置异常模块
-    "DEFAULT_RENDERER_CLASSES": ("common.middleware.res.CustomRenderer",),
-    "EXCEPTION_HANDLER": "common.middleware.res.custom_exception_handler",
+    "DEFAULT_RENDERER_CLASSES": (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
     # 鉴权
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -199,9 +201,9 @@ SPECTACULAR_SETTINGS = {
 
 # JWT配置 https://zhuanlan.zhihu.com/p/633173061
 SIMPLE_JWT = {
+    "AUTH_HEADER_NAME": 'HTTP_AUTHORIZATION',
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=4),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": SECRET_KEY,
-    "AUTH_HEADER_TYPES": ("",),
+    "SIGNING_KEY": SECRET_KEY
 }

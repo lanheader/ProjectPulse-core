@@ -7,15 +7,11 @@ User = get_user_model()
 
 def get_user_info(request):
     if request.method == "GET":
-        # print(dir(request))
-        # 获取请求参数token的值
-        token = request.headers.get("AUTHORIZATION")
-        # test=request.META.get('CONTENT-TYPE')
-        # print(test)
-        # print(token)
-
-        token_msg = authentication.JWTAuthentication().get_validated_token(token)
-        user_object = authentication.JWTAuthentication().get_user(token_msg)
+        auth = authentication.JWTAuthentication()
+        header = auth.get_header(request)
+        raw_token = auth.get_raw_token(header)
+        validated_token = auth.get_validated_token(raw_token)
+        user_object = auth.get_user(validated_token)
         if user_object.is_superuser:
             roles = ["admin"]
         else:
